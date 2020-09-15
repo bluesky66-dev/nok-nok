@@ -10,6 +10,7 @@ import {backgroundColor, WhiteText, GreenText} from '../../styled';
 import ManagementModal from '../ManagementModal';
 import EditManagementModal from '../EditManagementModal';
 import DatePicker from 'react-native-datepicker';
+import * as lodash from 'lodash';
 
 function List(props) {
   const {data, userData, from, to} = props;
@@ -53,6 +54,12 @@ function List(props) {
   const toggleModal = () => {
     setValues({...values, isModalVisible: !values.isModalVisible});
   };
+  useEffect(() => {
+    props.onChangePageLength(Math.ceil(values.clients.length/8));
+  }, [values.clients.length]);
+
+  const clientList = lodash.cloneDeep(values.clients);
+  const pageStart = props.page * 8;
   return (
     <View style={{borderBottomColor: backgroundColor, borderBottomWidth: 1}}>
       <EditManagementModal
@@ -62,7 +69,7 @@ function List(props) {
         data={values.data}
         index={values.index}
       />
-      {values.clients.map((item, index) => (
+      {clientList.slice(pageStart, pageStart + 16).map((item, index) => (
         <View
           key={index}
           style={{
@@ -193,6 +200,11 @@ function ManageList(props) {
   const toggleModal = () => {
     setValues({...values, isModalVisible: !values.isModalVisible});
   };
+
+  const onChangePageLength = (pageLength) => {
+    props.onChangePageLength(pageLength);
+  }
+
   return (
     <View>
       <View
@@ -247,6 +259,8 @@ function ManageList(props) {
       <ScrollView style={{height: hp(60)}}>
         <View>
           <List
+            onChangePageLength={onChangePageLength}
+            page={props.page}
             data={values.data}
             userData={values.data}
             from={values.from}

@@ -1,22 +1,27 @@
-import React, {useRef} from 'react';
-import {Text, TextInput} from 'react-native';
-import PhoneInput from 'react-native-phone-input'
-import {Container, InputTick, Input, TickText} from './style';
+import React, {useRef, useState} from 'react';
+import {Container, InputTick, PhoneBox, TickText} from './style';
 
 function PhoneInputBox(props) {
-  let phone =  useRef(null);
-  onPressFlag = () => {
-
+  const phone =  useRef(null);
+  const [phoneNumber, setPhonNumber] = useState('');
+  const onChangePhoneNumber = (value) => {
+    setPhonNumber(value);
+    props.onChange(phone.current.getCountryCode(), value);
   }
+  const onSelectCountry = (ios2) => {
+    props.onChange(phone.current.getCountryCode(), phoneNumber);
+  }
+
   return (
     <Container>
       <InputTick>
         <TickText>{props.tick}</TickText>
       </InputTick>
-      <PhoneInput
+      <PhoneBox
         ref={phone}
         initialCountry="br"
-        onChangePhoneNumber={(value) => props.onChange(value)}
+        onChangePhoneNumber={onChangePhoneNumber}
+        onSelectCountry={onSelectCountry}
         value={props.value}
         textProps={{placeholder: props.placeholder ? props.placeholder : ''}}
         textStyle={{fontSize:10}}

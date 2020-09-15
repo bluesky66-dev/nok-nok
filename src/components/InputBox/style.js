@@ -4,6 +4,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import PhoneInput from 'react-native-phone-input'
 import {lightGrayColor, backgroundColor} from '../../styled/variables';
 
 export const Container = styled(View)`
@@ -23,6 +24,15 @@ export const InputTick = styled(View)`
 `;
 
 export const Input = styled(TextInput)`
+  background-color: white;
+  height: ${hp(4)}px;
+  width: ${wp(40)}px;
+  padding: 0 10px;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+`;
+
+export const PhoneBox = styled(PhoneInput)`
   background-color: white;
   height: ${hp(4)}px;
   width: ${wp(40)}px;

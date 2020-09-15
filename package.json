@@ -5,6 +5,9 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "clean": "cd android && gradlew clean && cd ..",
+    "bundle": "cd android && gradlew bundleRelease && cd ..",
+    "assemble": "cd android && gradlew assembleRelease && cd ..",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
@@ -22,7 +25,7 @@
     "@react-native-firebase/storage": "^7.2.2",
     "@react-navigation/native": "^5.7.0",
     "@react-navigation/stack": "^5.7.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "react": "16.13.1",
     "react-confirm-alert": "^2.6.1",
     "react-native": "0.63.1",

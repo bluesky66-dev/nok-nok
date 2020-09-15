@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Image, View, ScrollView, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import AddModal from '../../components/AddModal';
@@ -17,6 +17,7 @@ import {
 import ManageList from "../../components/ManageList"
 
 function EditPublications({route,navigation}) {
+  const scrollList =  useRef(null);
   const { manage } = route.params;
   const [values, setValues] = useState({
     isModalVisible: false,
@@ -26,7 +27,9 @@ function EditPublications({route,navigation}) {
     management: manage,
     data: {},
   });
-
+  const [page, setPage] = useState(0);
+  const [pageLength, setPageLength] = useState(0);
+  const [nativeEvent, setNativeEvent] = useState(0);
   const userData = useSelector((store) => store.data);
 
   const toggleModal = () => {
@@ -48,9 +51,42 @@ function EditPublications({route,navigation}) {
   };
 
   useEffect(() => {
-    console.log("========================",userData)
+    // console.log("========================",userData)
     setValues({...values, data: userData});    
   }, [userData]);
+
+  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+    const paddingToBottom = 60;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+  };
+
+  const onScrollEndDrag = () => {
+    const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
+    console.log('layoutMeasurement.height', layoutMeasurement.height);
+    console.log('contentOffset.y', contentOffset.y);
+    console.log('contentSize.height', contentSize.height);
+
+    if (typeof layoutMeasurement !== 'undefined' && isCloseToBottom(nativeEvent) && page < pageLength) {
+      setPage(page + 1);
+      scrollList.current.scrollTo({x: 0, y:  contentOffset.y / 2, animated: true});
+    }
+    if (typeof layoutMeasurement !== 'undefined' && contentOffset.y < 60 && page > 0) {   
+      setPage(page - 1);
+      scrollList.current.scrollTo({x: 0, y:  (contentSize.height - layoutMeasurement.height)/ 2, animated: true});
+    } 
+  }
+  const onScroll = ({nativeEvent}) => {
+    setNativeEvent(nativeEvent);
+  }
+
+  const onChangePageLength = (pageL) => {
+    if (pageLength !== pageL) {
+      setPageLength(pageL - 2);
+    }    
+  }
+
+  console.log('page == ', page);
   return (
     <Container>
       <AddModal
@@ -101,13 +137,24 @@ function EditPublications({route,navigation}) {
             <WhiteText>Filtrar</WhiteText>
           </ManagementBtn>
         </View>
-        <ScrollView>
+        <ScrollView
+          ref={scrollList}
+          style={{
+            flex: 1
+          }}
+          onScrollEndDrag={onScrollEndDrag}
+          onScroll={onScroll}
+        >         
           {values.management?
           <ManageList 
+          onChangePageLength={onChangePageLength}
+          page={page}
           userData={values.data}
           />
           :
           <UserList
+          onChangePageLength={onChangePageLength}
+          page={page}
           navigation={navigation}
           closest={values.closest}
           latest={values.latest}

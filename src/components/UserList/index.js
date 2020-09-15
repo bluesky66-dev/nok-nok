@@ -14,6 +14,7 @@ import {
 } from 'react-native-responsive-screen';
 import {sortByLocation} from '../../utils/hooks';
 import Hyperlink from 'react-native-hyperlink';
+import * as lodash from 'lodash';
 
 function List(props) {
   const {item, index, userData, setData} = props;
@@ -101,6 +102,13 @@ function UserList(props) {
     return () => database().ref('/users').off('child_added', onChildAdd);
   }, [props.closest, props.latest]);
 
+  useEffect(() => {
+    props.onChangePageLength(Math.ceil(values.users.length/8));
+  }, [values.users.length]);
+
+  const userList = lodash.cloneDeep(values.users);
+  const pageStart = props.page * 8;
+
   return (
     <View>
       <ShowModal
@@ -110,7 +118,7 @@ function UserList(props) {
         // navigation={navigation}
       />
 
-      {values.users.map((item, index) => {
+      {userList.slice(pageStart, pageStart + 16).map((item, index) => {
         if (props.closest) {
           if (
             Math.floor(

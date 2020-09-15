@@ -12,6 +12,7 @@ import PhoneInputBox from '../../components/InputBox/PhoneInput';
 function PhoneVerification({navigation}) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [confirm, setConfirm] = useState(null);
+  const [countryCode, setCountryCode] = useState('');
   const [code, setCode] = useState('');
   const dispatch = useDispatch();
   async function signInWithPhoneNumber(phoneNumber) {
@@ -71,8 +72,9 @@ function PhoneVerification({navigation}) {
     }
   }
 
-  const onChange = (value) => {
+  const onChange = (countryCode, value) => {
     setPhoneNumber(value);
+    setCountryCode(countryCode);
   };
 
   const onChangeCode = (value) => {
@@ -87,8 +89,8 @@ function PhoneVerification({navigation}) {
           <Dot step="first" />
 
           <Form>
-            <InputBox tick="Celular" onChange={onChange} value={phoneNumber} placeholder="55+DDD+Número"/>
-            <RoundBtn onPress={() => signInWithPhoneNumber(phoneNumber)}>
+            <PhoneInputBox tick="Celular" onChange={onChange} value={phoneNumber} placeholder="DDD+Número"/>
+            <RoundBtn onPress={() => signInWithPhoneNumber(countryCode + phoneNumber)}>
               <GreenText>Próximo</GreenText>
             </RoundBtn>
           </Form>
@@ -103,7 +105,7 @@ function PhoneVerification({navigation}) {
         <Dot step="second" />
 
         <Form>
-          <PhoneInputBox tick="código" onChange={onChangeCode} value={code} placeholder="Aguarde 10 segundos"/>
+          <InputBox tick="código" onChange={onChangeCode} value={code} placeholder="Aguarde 10 segundos"/>
           <TouchableOpacity
             style={{marginTop: 10}}
             onPress={() => signInWithPhoneNumber(phoneNumber)}>
